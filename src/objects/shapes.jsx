@@ -1,6 +1,8 @@
 import React from 'react';
 import { POINCARE_WIDTH, POINCARE_HEIGHT, POINT_RADIUS, POINT_COLOR, LINE_COLOR, LINE_WIDTH } from './globals';
 
+const colors = ["blue" , "red", "green", "purple", "orange", "yellow", "pink", "brown", "cyan", "magenta", "lime", "indigo", "teal", "maroon", "olive", "navy", "aquamarine", "turquoise", "silver", "gray", "black"];
+
 export class Point {
     constructor(x, y) {
         this.x = x;
@@ -35,32 +37,54 @@ export class Curve {
     }
 
     getCenter(p1, p2) {
-        let p1Inverted = pDiskInvert(p1);
-        let x11 = p1.x, y11 = p1.y, x12 = p1Inverted.x, y12 = p1Inverted.y;
-        let m1 = Math.abs(x12 - x11) === 0 ? Infinity : -(y12 - y11) / (x12 - x11);
-        let b1 = (y12 + y11) / 2 - m1 * (x12 + x11) / 2;
-    
-        let p2Inverted = pDiskInvert(p2);
-        let x21 = p2.x, y21 = p2.y, x22 = p2Inverted.x, y22 = p2Inverted.y;
-        let m2 = Math.abs(x22 - x21) === 0 ? Infinity : -(y22 - y21) / (x22 - x21);
-        let b2 = (y22 + y21) / 2 - m2 * (x22 + x21) / 2;
-    
-        if (m1 === m2) {
-            return null;
+        if (p2.x < 0 && p2.y === 0) {
+            let temp = p1;
+            p1 = p2;
+            p2 = temp;
         }
-    
-        let x, y;
-        if (m1 === Infinity) {
-            x = (x11 + x12) / 2;
-            y = m2 * x + b2;
-        } else if (m2 === Infinity) {
-            x = (x21 + x22) / 2;
-            y = m1 * x + b1;
+
+        let Px = p1.x, Py = p1.y, Qx = p2.x, Qy = p2.y;
+        let iP = pDiskInvert(p1), iQ = pDiskInvert(p2);
+        let iPx = iP.x, iPy = iP.y, iQx = iQ.x, iQy = iQ.y;
+
+        let Mx = (Px + iPx) / 2, My = (Py + iPy) / 2, Nx = (Qx + iQx) / 2, Ny = (Qy + iQy) / 2;
+        let mp = -(Px - Mx) / (Py - My), mq = -(Qx - Nx) / (Qy - Ny);
+        let bp = My - mp * Mx, bq = Ny - mq * Nx;
+
+        if (Py === iPy) {
+            mp = Infinity;
+            bp = Mx; // For vertical lines, use x-intercept as 'b'
         } else {
-            x = (b2 - b1) / (m1 - m2);
-            y = m1 * x + b1;
+            mp = -(Px - iPx) / (Py - iPy);
+            bp = My - mp * Mx;
         }
-        return new Point(x, y);
+
+        if (Qy === iQy) {
+            mq = Infinity;
+            bq = Nx; // For vertical lines, use x-intercept as 'b'
+        } else {
+            mq = -(Qx - iQx) / (Qy - iQy);
+            bq = Ny - mq * Nx;
+        }
+        
+        console.log(mp, mq, bp, bq);
+
+        let x, y;
+        if (mp === mq) {
+            // Lines are parallel or coincident; handle as needed
+            return null;
+        } else if (mp === Infinity) {
+            x = bp; // Vertical line, x is constant
+            y = mq * x + bq;
+        } else if (mq === Infinity) {
+            x = bq; // Vertical line, x is constant
+            y = mp * x + bp;
+        } else {
+            x = (bq - bp) / (mp - mq);
+            y = mp * x + bp;
+        }
+    
+        return new Point(x, y); // Ensure Point is a valid constructor or class available in your context
     }
     
 
@@ -86,18 +110,26 @@ export class Curve {
         const svgCenterY = POINCARE_HEIGHT * (1 - this.center.y) / 2;
         const svgRadius = this.radius * POINCARE_WIDTH / 2;
     
+        // Calculating vector from center to each point
         const vector1 = { x: svgP1X - svgCenterX, y: svgP1Y - svgCenterY };
         const vector2 = { x: svgP2X - svgCenterX, y: svgP2Y - svgCenterY };
-
+    
+        // Determining direction of arc (sweepFlag) using cross product
         const crossProduct = vector1.x * vector2.y - vector1.y * vector2.x;
+        const sweepFlag = crossProduct > 0 ? 1 : 0;
     
-        const sweepFlag = crossProduct > 0 ? 1 : 0; // Correctly facing arc
+        // Calculating the angle between vectors to determine if the arc should be large
+        const angleBetweenPoints = Math.atan2(vector2.y, vector2.x) - Math.atan2(vector1.y, vector1.x);
+        const normalizedAngle = ((angleBetweenPoints % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
+        const largeArcFlag = normalizedAngle > Math.PI ? 0 : 0;
     
-        const largeArcFlag = 0; // Minor arc only
-    
+        // Creating SVG path
         const path = `M${svgP1X},${svgP1Y} A${svgRadius},${svgRadius} 0 ${largeArcFlag},${sweepFlag} ${svgP2X},${svgP2Y}`;
-        return <path d={path} stroke={LINE_COLOR} fill="none" strokeWidth={LINE_WIDTH.toString()} />;
+        return (
+            <path d={path} stroke={LINE_COLOR} fill="none" strokeWidth={LINE_WIDTH.toString()} />
+        );
     }
+    
 
     // For testing
 /*     toSVG() {
@@ -121,14 +153,14 @@ export class Polygon {
 
     getCurves(points) {
         const curves = [];
-        for (let i = 0; i < points.length; i++) {
+        for (let i = 0; i < points.length - 1; i++) {
             curves.push(new Curve(points[i], points[(i + 1) % points.length]));
         }
         return curves;
     }
 
     toSVG() {
-        return this.curves.map(curve => curve.toSVG());
+        return this.curves.map(curve => curve.toSVG()); //.concat(this.points.map(point => point.toSVG()));
     }
 
 }
@@ -136,10 +168,15 @@ export class Polygon {
 // HELPERS
 
 const pDiskInvert = (p) => {
-    return new Point(p.x / (p.x * p.x + p.y * p.y), p.y / (p.x * p.x + p.y * p.y));
+    return circleInvert(p, new Point(0, 0), 1);
 }
 
 const circleInvert = (p, c, r) => {
     const alpha = r*r/((p.x - c.x) * (p.x - c.x) + (p.y - c.y) * (p.y - c.y))
     return new Point(alpha*(p.x - c.x) + c.x, alpha*(p.y - c.y) + c.y)
+}
+
+function getRandomColor() {
+    const randomIndex = Math.floor(Math.random() * colors.length);
+    return colors[randomIndex];
 }

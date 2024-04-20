@@ -6,3 +6,6 @@ export const POINT_COLOR = 'black';
 
 export const LINE_WIDTH = 2;
 export const LINE_COLOR = 'gray';
+
+export const DEFAULT_P = 6;
+export const DEFAULT_Q = 5;

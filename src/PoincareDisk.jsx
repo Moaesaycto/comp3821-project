@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Point, Polygon } from './objects/shapes';
+import { Point, Polygon, Curve } from './objects/shapes';
 import { POINCARE_WIDTH, POINCARE_HEIGHT } from './objects/globals';
 import { SchlafliParams } from "./App"; 
 
@@ -38,28 +38,37 @@ const PoincareDisk = () => {
     }; */
     
     const generateCurves = (p, q, type) => {
-        const d = Math.sqrt((Math.tan(Math.PI / 2 - Math.PI / q) - Math.tan(Math.PI / p)) / (Math.tan(Math.PI / 2 - Math.PI / q) + Math.tan(Math.PI / p)))
+        const d = Math.sqrt((Math.tan(Math.PI / 2 - Math.PI / q) - Math.tan(Math.PI / p)) / (Math.tan(Math.PI / 2 - Math.PI / q) + Math.tan(Math.PI / p)));
         
         const polyPoints = [];
         for (let i = 0; i <= p; i++) {
-            const x = d * Math.cos(2 * Math.PI * i / p);
-            const y = d * Math.sin(2 * Math.PI * i / p);
+            const x = d * Math.cos(2 * Math.PI * i / p + (p % 2 ? 0 : Math.PI / p)); // p % 2 ? 0 : Math.PI / p is a hack to make the polygon symmetric when p is even
+            const y = d * Math.sin(2 * Math.PI * i / p + (p % 2 ? 0 : Math.PI / p)); // also solves a stupid bug when p is even
             polyPoints.push(new Point(x, y));
+        }
+
+        for (let i in polyPoints) {
+            console.log(polyPoints[i]);
         }
     
         const newPolygon = new Polygon(polyPoints);
         const newPolygons = [newPolygon];
     
-        newPolygons.push(newPolygon.curves[0].reflectPolygon(newPolygon));
+        // newPolygons.push(newPolygon.curves[0].reflectPolygon(newPolygon));
         console.log(newPolygon.curves[0]);
-/*         newPolygon.curves.forEach(curve => {
+        newPolygon.curves.forEach(curve => {
             newPolygons.push(curve.reflectPolygon(newPolygon));
-        }); */
+        });
+
+
     
     
         setPolygons(newPolygons);
     }
 
+
+    const p1 = new Point(0.3, 0.3);
+    const p2 = new Point(-0.5, 0.3);
     return (
         <div>
             <svg
@@ -70,6 +79,9 @@ const PoincareDisk = () => {
             >
                 <circle cx={POINCARE_WIDTH / 2} cy={POINCARE_HEIGHT / 2} r={POINCARE_WIDTH / 2} fill="white" />
                 {polygons.map(polygon => polygon.toSVG())}
+{/*                 {(new Curve(p1, p2)).toSVG()}
+                {p1.toSVG()}
+                {p2.toSVG()} */}
             </svg>
         </div>
     );

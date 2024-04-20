@@ -3,12 +3,13 @@ import logo from './logo.svg';
 import './App.css';
 import PoincareDisk from './PoincareDisk';
 import Options from './Options';
+import { DEFAULT_P, DEFAULT_Q } from './objects/globals';
 
 export const SchlafliParams = createContext({});
 
 function App() {
-  const [p, setP] = useState(5);
-  const [q, setQ] = useState(6);
+  const [p, setP] = useState(DEFAULT_P);
+  const [q, setQ] = useState(DEFAULT_Q);
   const [type, setType] = useState("r");
 
   return (

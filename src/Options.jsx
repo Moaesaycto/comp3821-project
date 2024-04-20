@@ -41,17 +41,6 @@ const Options = () => {
                 Define your custom tiling Schläfli symbol of the form \({"\\{p,q\\}"}\) such that \({"\\displaystyle \\dfrac{1}{p} + \\dfrac{1}{q} < \\dfrac{1}{2}"}\) must hold.
             </p>
             <div className="options-form">
-                <select
-                    name="types"
-                    id="types"
-                    value={type}
-                    onChange={(e) => setType(e.target.value)}
-                >
-                    <option value="r">Regular</option>
-                    <option value="t">t - Truncated</option>
-                    <option value="rr">rr - Semiregular</option>
-                    <option value="tr">tr - Omnitruncated</option>
-                </select>
                 <p>{"{"}</p>
                 <input
                     type="text"
