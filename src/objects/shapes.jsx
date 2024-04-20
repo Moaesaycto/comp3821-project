@@ -67,8 +67,6 @@ export class Curve {
             bq = Ny - mq * Nx;
         }
         
-        console.log(mp, mq, bp, bq);
-
         let x, y;
         if (mp === mq) {
             // Lines are parallel or coincident; handle as needed
@@ -84,7 +82,7 @@ export class Curve {
             y = mp * x + bp;
         }
     
-        return new Point(x, y); // Ensure Point is a valid constructor or class available in your context
+        return new Point(x, y);
     }
     
 
@@ -131,8 +129,8 @@ export class Curve {
     }
     
 
-    // For testing
-/*     toSVG() {
+    // For testing purposes only, never used in the actual app
+    toSVGCircle() {
         if (!this.center) {
             return null;
         }
@@ -142,7 +140,7 @@ export class Curve {
         const svgRadius = this.radius * POINCARE_WIDTH / 2;
     
         return <circle cx={svgCenterX} cy={svgCenterY} r={svgRadius} stroke={LINE_COLOR} fill="none" strokeWidth={LINE_WIDTH.toString()} />;
-    } */
+    }
 }
 
 export class Polygon {
