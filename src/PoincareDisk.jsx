@@ -3,6 +3,7 @@ import { Point, Polygon, Curve } from './objects/shapes';
 import { POINCARE_WIDTH, POINCARE_HEIGHT } from './objects/globals';
 import { SchlafliParams } from "./App"; 
 import { PolygonTree } from './math/tree';
+import { DownloadIcon } from '@radix-ui/react-icons';
 
 const PoincareDisk = () => {
     const { p, q, type } = useContext(SchlafliParams);
@@ -24,12 +25,6 @@ const PoincareDisk = () => {
             polyPoints.push(new Point(x, y));
         }
 
-    /*      for (let i in polyPoints) {
-            console.log(polyPoints[i]);
-        }
-     */
-
-        // Implementation for submission
         const newPolygon = new Polygon(polyPoints);
         const newPolygons = [newPolygon];
     
@@ -44,23 +39,50 @@ const PoincareDisk = () => {
                 });
             });
         }
-
-
-    
     
         setPolygons(newPolygons);
+    }
+
+    const downloadSVG = () => {
+        const svgElement = document.getElementById('poincare-svg');
+        const svgData = new XMLSerializer().serializeToString(svgElement);
+        const blob = new Blob([svgData], { type: 'image/svg+xml' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'poincare.svg';
+        link.click();
+        URL.revokeObjectURL(url);
     }
 
     return (
         <div>
             <svg
+                id="poincare-svg"
                 width={POINCARE_WIDTH}
                 height={POINCARE_HEIGHT}
-                // style={{ border: '1px solid black', borderRadius: '100%' }}
             >
                 <circle cx={POINCARE_WIDTH / 2} cy={POINCARE_HEIGHT / 2} r={POINCARE_WIDTH / 2} fill="white" />
                 {polygons.map(polygon => polygon.toSVG())}
             </svg>
+            <button onClick={downloadSVG} style={
+                {
+                    position: "absolute",
+                    backgroundColor: "#b73333",
+                    border: "none",
+                    color: "white",
+                    textAlign: "center",
+                    textDecoration: "none",
+                    display: "inline-block",
+                    fontSize: "16px",
+                    margin: "4px 2px",
+                    cursor: "pointer",
+                    borderRadius: "8px",
+                    padding: "8px 16px",
+                    top: "0",
+                    right: "0"    
+                }
+                }><DownloadIcon width={"30px"} height={"30px"}/></button>
         </div>
     );
 };
