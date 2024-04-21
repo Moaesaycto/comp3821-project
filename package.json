@@ -1,6 +1,6 @@
 {
   "homepage": "http://moaesaycto.github.io/comp3821-project",
-  "name": "algorithms-project",
+  "name": "comp3821-project",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
