@@ -18,7 +18,6 @@ class PolygonNode {
     }
 
     reflectPolygon(polygon, index) {
-        // Assume this method exists
         return null;
         //return polygon.curves[index-1].reflectPolygon(polygon); // Assume returning a new polygon object as a result of reflection
     }
@@ -44,9 +43,9 @@ class PolygonNode {
 }
 
 // Example usage
-const initialPolygon = {
+/* const initialPolygon = {
     points: [1, 2, 3, 4, 5]
-};
+}; */
 
 /* const rootNode = new PolygonNode(initialPolygon);
 rootNode.generateTree(0, 3); // Generate the tree to the depth of 5

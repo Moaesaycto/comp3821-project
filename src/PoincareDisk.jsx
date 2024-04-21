@@ -24,10 +24,12 @@ const PoincareDisk = () => {
             polyPoints.push(new Point(x, y));
         }
 
-/*         for (let i in polyPoints) {
+    /*      for (let i in polyPoints) {
             console.log(polyPoints[i]);
         }
      */
+
+        // Implementation for submission
         const newPolygon = new Polygon(polyPoints);
         const newPolygons = [newPolygon];
     
