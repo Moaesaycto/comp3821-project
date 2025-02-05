@@ -1,11 +1,14 @@
 import React, { useState, useContext } from "react";
 import { SchlafliParams } from "./App";
+import { MathJax } from "better-react-mathjax";
 
 const Options = () => {
     const [p, setP] = useState("");
     const [q, setQ] = useState("");
     const [type, setType] = useState("r");
     const [hasError, setHasError] = useState(false);
+
+    void setType;
 
     const { setP: setGlobalP, setQ: setGlobalQ, setType: setGlobalType } = useContext(SchlafliParams);
 
@@ -37,9 +40,11 @@ const Options = () => {
     return (
         <div className="options-menu">
             <h1>Schläfli Symbols</h1>
-            <p>
-                Define your custom tiling Schläfli symbol of the form \({"\\{p,q\\}"}\) such that \({"\\displaystyle \\dfrac{1}{p} + \\dfrac{1}{q} < \\dfrac{1}{2}"}\) must hold.
-            </p>
+            <MathJax dynamic={true}>
+                <p>
+                    Define your custom tiling Schläfli symbol of the form \({"\\{p,q\\}"}\) such that \({"\\displaystyle \\dfrac{1}{p} + \\dfrac{1}{q} < \\dfrac{1}{2}"}\) must hold.
+                </p>
+            </MathJax>
             <div className="options-form">
                 <p>{"{"}</p>
                 <input
