@@ -67,7 +67,7 @@ const Options = () => {
                         setP(e.target.value);
                         adjustInputWidth(e.target);
                     }}
-                    style={{ width: `${p.length + 1}ch` }} // Dynamic width
+                    style={{ width: `${p.length + 1}ch`, padding: 0 }}
                 />
                 <p>,</p>
                 <input
@@ -79,7 +79,7 @@ const Options = () => {
                         setQ(e.target.value);
                         adjustInputWidth(e.target);
                     }}
-                    style={{ width: `${q.length + 1}ch` }} // Dynamic width
+                    style={{ width: `${q.length + 1}ch`, padding: 0 }}
                 />
                 <p>{"}"}</p>
                 <button type="submit" onClick={schlafliSubmit}>
