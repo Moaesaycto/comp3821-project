@@ -1,13 +1,13 @@
 import React, { useState, useContext } from "react";
 import { SchlafliParams } from "./App";
 import { MathJax } from "better-react-mathjax";
+import { DEFAULT_P, DEFAULT_Q } from "./objects/globals";
 
 const Options = () => {
-    const [p, setP] = useState("");
-    const [q, setQ] = useState("");
+    const [p, setP] = useState(DEFAULT_P.toString());
+    const [q, setQ] = useState(DEFAULT_Q.toString());
     const [type, setType] = useState("r");
     const [hasError, setHasError] = useState(false);
-
     void setType;
 
     const { setP: setGlobalP, setQ: setGlobalQ, setType: setGlobalType } = useContext(SchlafliParams);
@@ -33,8 +33,19 @@ const Options = () => {
             setGlobalP(pVal);
             setGlobalQ(qVal);
             setGlobalType(type);
-            console.log({ p: pVal, q: qVal, type });
         }
+    };
+
+    const adjustInputWidth = (input) => {
+        const span = document.createElement("span");
+        span.style.visibility = "hidden";
+        span.style.position = "absolute";
+        span.style.whiteSpace = "pre";
+        span.style.font = window.getComputedStyle(input).font;
+        span.textContent = input.value || input.placeholder || " ";
+        document.body.appendChild(span);
+        input.style.width = `${span.offsetWidth + 10}px`;
+        document.body.removeChild(span);
     };
 
     return (
@@ -52,16 +63,25 @@ const Options = () => {
                     id="schlafli-1"
                     className={hasError ? "error" : "no-error"}
                     value={p}
-                    onChange={(e) => setP(e.target.value)}
-                ></input>
+                    onChange={(e) => {
+                        setP(e.target.value);
+                        adjustInputWidth(e.target);
+                    }}
+                    style={{ width: `${p.length + 1}ch` }} // Dynamic width
+                />
                 <p>,</p>
                 <input
                     type="text"
                     id="schlafli-2"
                     className={hasError ? "error" : ""}
                     value={q}
-                    onChange={(e) => setQ(e.target.value)}
-                ></input>
+                    onChange={(e) => {
+                        setQ(e.target.value);
+                        adjustInputWidth(e.target);
+                    }}
+                    style={{ width: `${q.length + 1}ch` }} // Dynamic width
+                />
+
                 <p>{"}"}</p>
                 <button type="submit" onClick={schlafliSubmit}>
                     <i className="fa fa-check"></i>

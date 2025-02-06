@@ -1,8 +1,6 @@
 import React from 'react';
 import { POINCARE_WIDTH, POINCARE_HEIGHT, POINT_RADIUS, POINT_COLOR, LINE_COLOR, LINE_WIDTH } from './globals';
 
-/* const colors = ["blue" , "red", "green", "purple", "orange", "yellow", "pink", "brown", "cyan", "magenta", "lime", "indigo", "teal", "maroon", "olive", "navy", "aquamarine", "turquoise", "silver", "gray", "black"]; */
-
 const EPSILON = 1e-10;
 
 export class Point {
@@ -12,7 +10,7 @@ export class Point {
     }
 
     toSVG() {
-        return <circle cx={POINCARE_WIDTH*(this.x + 1) / 2} cy={POINCARE_HEIGHT*(1 - this.y) / 2} r={POINT_RADIUS.toString()} fill={POINT_COLOR} />;
+        return <circle cx={POINCARE_WIDTH * (this.x + 1) / 2} cy={POINCARE_HEIGHT * (1 - this.y) / 2} r={POINT_RADIUS.toString()} fill={POINT_COLOR} />;
     }
 
     midpoint(p) {
@@ -29,7 +27,7 @@ export class Curve {
         this.p1 = p1;
         this.p2 = p2;
         this.center = this.getCenter(p1, p2);
-        this.radius = this.center ? this.calculateRadius(this.center, p1) : 0;
+        this.radius = this.center ? this.calculateRadius(this.center, p1) : null;
     }
 
     calculateRadius(center, point) {
@@ -42,6 +40,11 @@ export class Curve {
         if (p2.x < 0 && Math.abs(p2.y) < EPSILON) [p1, p2] = [p2, p1];
 
         const [Px, Py, Qx, Qy] = [p1.x, p1.y, p2.x, p2.y];
+
+        if (Math.abs(Px * Qy - Py * Qx) < EPSILON) {
+            return null;
+        }
+
         const [iP, iQ] = [pDiskInvert(p1), pDiskInvert(p2)];
         const [Mx, My, Nx, Ny] = [(Px + iP.x) / 2, (Py + iP.y) / 2, (Qx + iQ.x) / 2, (Qy + iQ.y) / 2];
 
@@ -58,17 +61,31 @@ export class Curve {
         return new Point(x, y);
     }
 
-    reflect = (point) => {
+    reflect(point) {
+        if (!this.center) {
+            return reflectAcrossLine(point, this.p1, this.p2);
+        }
         return circleInvert(point, this.center, this.radius);
     }
 
-    reflectPolygon = (polygon) => {
+    reflectPolygon(polygon) {
         const reflectedPoints = polygon.points.map(point => this.reflect(point));
         return new Polygon(reflectedPoints);
     }
 
     toSVG() {
-        if (!this.center) return null;
+        if (!this.center) {
+            return (
+                <line
+                    x1={POINCARE_WIDTH * (this.p1.x + 1) / 2}
+                    y1={POINCARE_HEIGHT * (1 - this.p1.y) / 2}
+                    x2={POINCARE_WIDTH * (this.p2.x + 1) / 2}
+                    y2={POINCARE_HEIGHT * (1 - this.p2.y) / 2}
+                    stroke={LINE_COLOR}
+                    strokeWidth={LINE_WIDTH.toString()}
+                />
+            );
+        }
 
         const [svgP1X, svgP1Y] = [POINCARE_WIDTH * (this.p1.x + 1) / 2, POINCARE_HEIGHT * (1 - this.p1.y) / 2];
         const [svgP2X, svgP2Y] = [POINCARE_WIDTH * (this.p2.x + 1) / 2, POINCARE_HEIGHT * (1 - this.p2.y) / 2];
@@ -84,24 +101,16 @@ export class Curve {
         const angleBetweenPoints = Math.atan2(vector2.y, vector2.x) - Math.atan2(vector1.y, vector1.x);
         const largeArcFlag = (((angleBetweenPoints % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI)) > Math.PI ? 0 : 0;
 
-        const path = `M${svgP1X},${svgP1Y} A${svgRadius},${svgRadius} 0 ${largeArcFlag*1.5},${sweepFlag} ${svgP2X},${svgP2Y}`;
+        const path = `M${svgP1X},${svgP1Y} A${svgRadius},${svgRadius} 0 ${largeArcFlag * 1.5},${sweepFlag} ${svgP2X},${svgP2Y}`;
         return <path d={path} stroke={LINE_COLOR} fill="none" strokeWidth={LINE_WIDTH.toString()} />;
     }
-    
-
-    // For testing purposes only, never used in the actual app
-    toSVGCircle() {
-        if (!this.center) {
-            return null;
-        }
-    
-        const svgCenterX = POINCARE_WIDTH * (this.center.x + 1) / 2;
-        const svgCenterY = POINCARE_HEIGHT * (1 - this.center.y) / 2;
-        const svgRadius = this.radius * POINCARE_WIDTH / 2;
-    
-        return <circle cx={svgCenterX} cy={svgCenterY} r={svgRadius} stroke={LINE_COLOR} fill="none" strokeWidth={LINE_WIDTH.toString()} />;
-    }
 }
+
+const reflectAcrossLine = (p, l1, l2) => {
+    const [dx, dy] = [l2.x - l1.x, l2.y - l1.y];
+    const dot = ((p.x - l1.x) * dx + (p.y - l1.y) * dy) / (dx * dx + dy * dy);
+    return new Point(2 * (l1.x + dot * dx) - p.x, 2 * (l1.y + dot * dy) - p.y);
+};
 
 export class Polygon {
     constructor(points) {
@@ -118,23 +127,19 @@ export class Polygon {
     }
 
     toSVG() {
-        return this.curves.map(curve => curve.toSVG()); //.concat(this.points.map(point => point.toSVG()));
+        return this.curves.map((curve, index) => (
+            <React.Fragment key={index}>
+                {curve.toSVG()}
+            </React.Fragment>
+        ));
     }
-
 }
-
-// HELPERS
 
 const pDiskInvert = (p) => {
     return circleInvert(p, new Point(0, 0), 1);
 }
 
 const circleInvert = (p, c, r) => {
-    const alpha = r*r/((p.x - c.x) * (p.x - c.x) + (p.y - c.y) * (p.y - c.y))
-    return new Point(alpha*(p.x - c.x) + c.x, alpha*(p.y - c.y) + c.y)
+    const alpha = r * r / ((p.x - c.x) * (p.x - c.x) + (p.y - c.y) * (p.y - c.y));
+    return new Point(alpha * (p.x - c.x) + c.x, alpha * (p.y - c.y) + c.y);
 }
-
-/* function getRandomColor() {
-    const randomIndex = Math.floor(Math.random() * colors.length);
-    return colors[randomIndex];
-} */

@@ -3,10 +3,13 @@ import './App.css';
 import PoincareDisk from './PoincareDisk';
 import Options from './Options';
 import { DEFAULT_P, DEFAULT_Q } from './objects/globals';
-import { MathJax, MathJaxContext } from "better-react-mathjax";
+import { MathJaxContext } from "better-react-mathjax";
 
 
-export const SchlafliParams = createContext({});
+export const SchlafliParams = createContext({
+  p: DEFAULT_P,
+  q: DEFAULT_Q
+});
 
 function App() {
   const [p, setP] = useState(DEFAULT_P);
