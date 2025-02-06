@@ -92,6 +92,8 @@ export class Curve {
         const [svgCenterX, svgCenterY] = [POINCARE_WIDTH * (this.center.x + 1) / 2, POINCARE_HEIGHT * (1 - this.center.y) / 2];
         const svgRadius = this.radius * POINCARE_WIDTH / 2;
 
+        if (!isFinite(svgRadius) || isNaN(svgRadius)) return null;
+
         const vector1 = { x: svgP1X - svgCenterX, y: svgP1Y - svgCenterY };
         const vector2 = { x: svgP2X - svgCenterX, y: svgP2Y - svgCenterY };
 
@@ -99,6 +101,7 @@ export class Curve {
         const sweepFlag = crossProduct > 0 ? 1 : 0;
 
         const angleBetweenPoints = Math.atan2(vector2.y, vector2.x) - Math.atan2(vector1.y, vector1.x);
+        if (!isFinite(angleBetweenPoints) || isNaN(angleBetweenPoints)) return null;
         const largeArcFlag = (((angleBetweenPoints % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI)) > Math.PI ? 0 : 0;
 
         const path = `M${svgP1X},${svgP1Y} A${svgRadius},${svgRadius} 0 ${largeArcFlag * 1.5},${sweepFlag} ${svgP2X},${svgP2Y}`;
@@ -137,9 +140,14 @@ export class Polygon {
 
 const pDiskInvert = (p) => {
     return circleInvert(p, new Point(0, 0), 1);
-}
+};
 
 const circleInvert = (p, c, r) => {
-    const alpha = r * r / ((p.x - c.x) * (p.x - c.x) + (p.y - c.y) * (p.y - c.y));
-    return new Point(alpha * (p.x - c.x) + c.x, alpha * (p.y - c.y) + c.y);
-}
+    const dx = p.x - c.x;
+    const dy = p.y - c.y;
+    const denom = dx * dx + dy * dy;
+    if (Math.abs(denom) < EPSILON) return new Point(c.x, c.y);
+    const alpha = r * r / denom;
+    return new Point(alpha * dx + c.x, alpha * dy + c.y);
+};
+
