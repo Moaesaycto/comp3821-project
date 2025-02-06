@@ -49,7 +49,7 @@ const Options = () => {
     };
 
     return (
-        <div className="options-menu">
+        <div className="options-menu" style={{ position: "relative" }}>
             <h1>Schläfli Symbols</h1>
             <MathJax dynamic={true}>
                 <p>
@@ -81,12 +81,37 @@ const Options = () => {
                     }}
                     style={{ width: `${q.length + 1}ch` }} // Dynamic width
                 />
-
                 <p>{"}"}</p>
                 <button type="submit" onClick={schlafliSubmit}>
                     <i className="fa fa-check"></i>
                 </button>
             </div>
+            <a
+                href="https://moaesaycto.github.io/"
+                className="moae-button"
+                style={{
+                    position: "absolute",
+                    bottom: "10px",
+                    right: "10px",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    padding: "8px 12px",
+                    backgroundColor: "#6F7072",
+                    color: "#fff",
+                    textDecoration: "none",
+                    borderRadius: "5px",
+                    fontWeight: "bold"
+                }}
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                <img
+                    src={`${process.env.PUBLIC_URL}/moae-logo.png`}
+                    alt="MOAE Logo"
+                    style={{ marginRight: "5px", height: "20px", verticalAlign: "middle" }}
+                />
+                <span style={{ verticalAlign: "middle" }}>MOAE</span>
+            </a>
         </div>
     );
 };
