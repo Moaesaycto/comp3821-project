@@ -1,7 +1,17 @@
-# Hyperbolic Tiling Generator
+# **Hyperbolic Tiling Generator**
 
-I've found myself working on hyperbolic tessellations during the development of Tordie 3, 4 and 5, as well as a few projects during my studies of computer science. One such project involved finding an optimal algorithm to span the [Poincaré disk model](https://en.wikipedia.org/wiki/Poincar%C3%A9_disk_model) as efficiently as possible.
+**Type:** Algorithm / Visualisation Tool · **Tech Stack:** Python, Geometry, Computational Graphics · **Year:** 2025
 
-If you want to know more about how to generate this manually, then you may find [this Workflow](https://moae.dev/workflows/#/mathematics/analytic_geometry/Efficient-Tiling-of-a-Hyperbolic-Tessellation) interesting to see.
+## **Overview**
 
-Please note that this algorithm may not be optimal, and may not be the exact implementation used in Tordie. Please be sure to consult to Tordie implementation separately if this is of interest.
+This project explores efficient methods for generating hyperbolic tessellations within the [Poincaré disk model](https://en.wikipedia.org/wiki/Poincar%C3%A9_disk_model). The work originated during development of **Tordie 3–5** and related computer science coursework focused on geometric computation.
+
+## **Details**
+
+The generator implements an algorithm designed to span the Poincaré disk as efficiently as possible. It serves as both a visualisation tool and an experimental foundation for more complex geometric systems used in later projects.
+
+For a deeper look at the manual generation process, see my [workflow on efficient hyperbolic tessellation](https://moae.dev/workflows/#/mathematics/analytic_geometry/Efficient-Tiling-of-a-Hyperbolic-Tessellation).
+
+## **Note**
+
+This implementation may differ from the version used in **Tordie**, which should be consulted separately for production details.
