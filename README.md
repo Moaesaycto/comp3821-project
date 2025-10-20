@@ -4,7 +4,7 @@
 
 ## **Overview**
 
-This project explores efficient methods for generating hyperbolic tessellations within the [Poincaré disk model](https://en.wikipedia.org/wiki/Poincar%C3%A9_disk_model). The work originated during development of **Tordie 3–5** and related computer science coursework focused on geometric computation.
+This project explores efficient methods for generating hyperbolic tessellations within the [Poincaré disk model](https://en.wikipedia.org/wiki/Poincar%C3%A9_disk_model). The work originated during development of **Tordie 3–5** and related computer science coursework focused on geometric computation. This site is [live](https://moae.dev/comp3821-project/)!
 
 ## **Details**
 
