@@ -1,6 +1,6 @@
 # **Hyperbolic Tiling Generator**
 
-**Type:** Algorithm / Visualisation Tool · **Tech Stack:** Python, Geometry, Computational Graphics · **Year:** 2025
+**Type:** Algorithm / Visualisation Tool · **Tech Stack:** Python, Geometry, Computational Graphics · **Year:** 2024
 
 ## **Overview**
 
